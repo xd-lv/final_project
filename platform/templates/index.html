@@ -1,0 +1,192 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Fianl Project</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../static/assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="../static/assets/css/noscript.css" /></noscript>
+
+	</head>
+	<body class="is-preload">
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+                <header id="header">
+                    <!-- <div class="yihang">
+                <img class="img-logo" alt="logo" src="../static/assets/logo/logo_white.png"/>
+                <img class="img-logo" alt="logo" src="../static/assets/logo/logo_dark.png"/>
+                </div> -->
+                    <h1>Technology Companies Industry Consulting</h1>
+                    <div class="content">
+                        <div class="inner">
+                            <div class="jumbotron">
+                                <h3>Welcome to the industry consulting platform for technology companies!</h3>
+                                <p>Here, you only need to submit the Technology Companies Industry KG, and the platform will complete model training and map completion on the cloud, and finally obtain the technology company's industry in batches.</p>
+                                <h2>Submit the task</h2>
+                                <p>Click the Upload File button to submit the Technology Companies Industry KG file, and the task can be provided.</p>
+                                <h2>Get the result</h2>
+                                <p>Click the Result List button to view the task progress list and obtain the results of Technology Companies Industry.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <nav>
+                        <ul>
+                            <li class="btn" style="background-color:#4ebd87"><a href="#work" onclick="upload()">Upload
+                                File</a></li>
+                            <li class="btn" style="background-color:#4ebd87"><a href="#about" onclick="resultlist()">Result
+                                List</a></li>
+                        </ul>
+                    </nav>
+                </header>
+
+				<!-- Main -->
+					<div id="main">
+						<!-- Work -->
+							<article id="work" >
+								<h2 class="major">Upload File</h2>
+                                    <div id="upload_content"  align="center">
+                                        <div id="dragImage" style="width: 100%; height: 200px; color: white; margin: 0 auto; border:2px dashed #FFFFFF; border-radius:20px;display: table" align="center">
+                                        <br>
+                                            <h4 style="margin-top: 20px;text-align: center">Please drag the file here</h4>
+                                        <br>
+                                            <button type="button" name="seach" onclick="uploadbutton()" style=" margin: 0 auto; background: #1b1f22; height: 40px; width: 220px; border-radius: 10px; border: 1px solid #FFFFFF;background-color:#4ebd87; font-size: 10px">
+                                                Click on Upload
+                                            </button>
+                                        <input type="file" id="imgUpload"  onchange="uploaddrag()" style="display: none; margin: 0 auto"/>
+                                    </div>
+                                    </div>
+							</article>
+						<!-- About -->
+							<article id="about" style="width: 100%">
+								<h2 class="major">Result List</h2>
+								<div id="about_text">
+                                    <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>Task number</th>
+                                        <th>Start time</th>
+                                        <th>Finish times</th>
+                                        <th>Predicted number</th>
+                                        <th>Download</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="resulttable">
+                                    </tbody>
+                                </table>
+                                </div>
+							</article>
+					</div>
+				<!-- Footer -->
+					<footer id="footer">
+						<p class="copyright">&copy; Final Project-Technology Companies Industry Consulting Platform-Lv Xiaodong</p>
+					</footer>
+			</div>
+		<!-- BG -->
+			<div id="bg"></div>
+		<!-- Scripts -->
+			<script src="../static/assets/js/jquery.min.js"></script>
+			<script src="../static/assets/js/browser.min.js"></script>
+			<script src="../static/assets/js/breakpoints.min.js"></script>
+			<script src="../static/assets/js/util.js"></script>
+			<script src="../static/assets/js/main.js"></script>
+
+    <script src="../static/vendor/jquery/jquery.min.js"></script>
+    <script type="text/javascript">//type 没有用
+        var showText = " "
+        var reqUrl = " "
+        function resultlist() {
+            $.ajax({
+				url: "http://127.0.0.1:5000/result",
+				type:"GET",
+				//data: formData,
+				contentType: false,
+				processData: false,
+				success: function(req) {
+					console.log('successful', req)
+
+                    showresult(req);
+				},
+				error: function() {
+					alert("error");
+				}
+			});
+        }
+        function showresult(req) {
+
+            var html = ''
+
+             for (var i = 0; i < req.length; i+=1) {
+                html += '<tr>'
+                for (var j = 0; j<req[i].length; j+=1) {
+                    html += setDiv_table(req[i][j])
+                }
+                if (req[i][2]!='running'){
+                    html += setButton_table(i)
+                }
+                else {
+                    html += setDiv_table('waiting...')
+                }
+                html += '</tr>'
+            }
+
+            document.getElementById('resulttable').innerHTML = html
+        }
+        function setButton_table(i) {
+            var html = '<td>'
+            html += '<form class="contact-form" action="contact.php" method="post" enctype="multipart/form-data">'
+            html += '<div class="col-xs-12 no-pad text-left mrg-top-xs">'
+            html += '<button id="button'+i+'" type="button" onclick="downloadbutton('+(i+1)+')" class="button button-green button-small">'
+            html += 'Download'
+            html += '</button>'
+            html += '</div>'
+            html += '</form>'
+            html += '</td>'
+            return html
+        }
+        function setDiv_table(item) {
+            var div = '<td>'+ item +'</td>'
+            return div
+        }
+        function downloadbutton(id) {
+            $.ajax({
+				url: "http://127.0.0.1:5000/download?id="+id,
+				type:"GET",
+				contentType: false,
+				processData: false,
+				success: function(req) {
+					console.log('successful', req)
+                    window.open("http://127.0.0.1:5000"+req);
+				},
+				error: function() {
+					alert("error");
+				}
+			});
+        }
+        function uploadbutton() {
+            $("#imgUpload").val("");
+			$("#imgUpload").click();
+        }
+        function uploaddrag() {
+            data = $("#imgUpload").val()
+			var formData = new FormData();
+			formData.append("file", document.getElementById("imgUpload").files[0])
+			$.ajax({
+				url: "http://127.0.0.1:5000/upload",
+				type:"POST",
+				data: formData,
+				contentType: false,
+				processData: false,
+				success: function(req) {
+					console.log('successful', req)
+                    alert("Uploaded successfully!\nYour task number is "+req);
+				},
+				error: function() {
+					alert("error");
+				}
+			});
+        }
+    </script>
+	</body>
+</html>
